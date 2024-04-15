@@ -1,1 +1,8 @@
-<p>roman-converter works!</p>
+<div>
+    <h2>Roman Numeral to Number Converter</h2>
+    <input type="text" [(ngModel)]="romanInput" placeholder="Enter Roman Numeral" />
+    <button (click)="convertRomanToNumber()">Convert</button>
+    <p *ngIf="error">{{ error }}</p>
+    <p *ngIf="result">Result: {{ result }}</p>
+  </div>
+  
