@@ -48,7 +48,8 @@ export class AgeCalculatorComponent {
       return 'Date of birth cannot be in the future';
     }
     
-    if (isNaN(this.year) || this.year < 0 || this.year.toString().length !== 4) {
+    if (isNaN(this.year) || this.year < 0 ) {
+      
       return 'Invalid year';
     }
 
