@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-
+import { DateUtilsService } from '../services/date-utils.service';
 
 @Component({
   selector: 'app-age-calculator',
@@ -16,38 +16,30 @@ export class AgeCalculatorComponent {
   day!: number;
   ageResult!: string;
   intervalId: any;
+
+  constructor(private dateUtils: DateUtilsService ){}
   
   
   calculateAge() {
-    const currentDate = new Date();
     const birthDate = new Date(this.year, this.month - 1, this.day); 
-
-    const validationError = this.validateInputDate(birthDate, currentDate);
+    
+    const validationError = this.validateInputDate(birthDate);
     if (validationError) {
       this.ageResult = validationError;
       clearInterval(this.intervalId);
       return;
     }
-
-    const ageInMilliseconds = currentDate.getTime() - birthDate.getTime();
-    const ageInSeconds = ageInMilliseconds/1000;
-
-    const ageDate = new Date(ageInMilliseconds);
-    const years = Math.abs(ageDate.getUTCFullYear() - 1970);
-    const months = ageDate.getUTCMonth();
-    const days = ageDate.getUTCDate() - 1;
-    const hours = Math.floor((ageInSeconds / 3600) % 24);
-    const minutes = Math.floor((ageInSeconds / 60) % 60);
-    const seconds = Math.floor(ageInSeconds % 60);
-
-    this.ageResult = `${years} years, ${months} months, ${days} days, ${hours} hours, ${minutes} minutes, ${seconds} seconds`;
+  
+    this.ageResult = this.dateUtils.calculateAge(birthDate);
     // 
     this.intervalId = setInterval(() => {
       this.calculateAge();
     }, 1000);
   }
 
-  validateInputDate(inputDate: Date, currentDate: Date): string | null {
+  validateInputDate(inputDate: Date): string | null {
+    const currentDate = new Date();
+
     if (isNaN(inputDate.getTime())) {
       return 'Invalid date';
     }
@@ -63,6 +55,7 @@ export class AgeCalculatorComponent {
     if (this.month < 1 || this.month > 12) {
       return 'Invalid month';
     }
+
     const daysInMonth = new Date(this.year, this.month, 0).getDate();
     if (this.day < 1 || this.day > daysInMonth) {
       return 'Invalid day for the selected month';
