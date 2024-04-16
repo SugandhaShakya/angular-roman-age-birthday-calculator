@@ -16,13 +16,16 @@ export class AgeCalculatorComponent {
   day!: number;
   ageResult!: string;
   intervalId: any;
-
+  
+  
   calculateAge() {
     const currentDate = new Date();
     const birthDate = new Date(this.year, this.month - 1, this.day); 
 
-    if (isNaN(birthDate.getTime())) {
-      this.ageResult = 'Invalid date';
+    const validationError = this.validateInputDate(birthDate, currentDate);
+    if (validationError) {
+      this.ageResult = validationError;
+      clearInterval(this.intervalId);
       return;
     }
 
@@ -38,31 +41,33 @@ export class AgeCalculatorComponent {
     const seconds = Math.floor(ageInSeconds % 60);
 
     this.ageResult = `${years} years, ${months} months, ${days} days, ${hours} hours, ${minutes} minutes, ${seconds} seconds`;
+    // 
     this.intervalId = setInterval(() => {
-      this.updateAge();
+      this.calculateAge();
     }, 1000);
   }
-  
-  updateAge() {
-    const currentDate = new Date();
-    const birthDate = new Date(this.year, this.month - 1, this.day); 
 
-    if (isNaN(birthDate.getTime())) {
-      this.ageResult = 'Invalid date';
-      return;
+  validateInputDate(inputDate: Date, currentDate: Date): string | null {
+    if (isNaN(inputDate.getTime())) {
+      return 'Invalid date';
     }
 
-    const ageInMilliseconds = currentDate.getTime() - birthDate.getTime();
-    const ageInSeconds = ageInMilliseconds/1000;
+    if (inputDate.getTime() > currentDate.getTime()) {
+      return 'Date of birth cannot be in the future';
+    }
+    
+    if (isNaN(this.year) || this.year < 0 || this.year.toString().length !== 4) {
+      return 'Invalid year';
+    }
 
-    const ageDate = new Date(ageInMilliseconds);
-    const years = Math.abs(ageDate.getUTCFullYear() - 1970);
-    const months = ageDate.getUTCMonth();
-    const days = ageDate.getUTCDate() - 1;
-    const hours = Math.floor((ageInSeconds / 3600) % 24);
-    const minutes = Math.floor((ageInSeconds / 60) % 60);
-    const seconds = Math.floor(ageInSeconds % 60);
+    if (this.month < 1 || this.month > 12) {
+      return 'Invalid month';
+    }
+    const daysInMonth = new Date(this.year, this.month, 0).getDate();
+    if (this.day < 1 || this.day > daysInMonth) {
+      return 'Invalid day for the selected month';
+    }
 
-    this.ageResult = `${years} years, ${months} months, ${days} days, ${hours} hours, ${minutes} minutes, ${seconds} seconds`;
+    return null
   }
 }
