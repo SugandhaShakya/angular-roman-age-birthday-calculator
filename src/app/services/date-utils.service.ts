@@ -33,7 +33,5 @@ export class DateUtilsService {
     const seconds = Math.floor(ageInSeconds % 60);
 
     return { years, months, days, hours, minutes, seconds }
-
-    // return `${years} years, ${months} months, ${days} days, ${hours} hours, ${minutes} minutes, ${seconds} seconds`;
   }
 }
