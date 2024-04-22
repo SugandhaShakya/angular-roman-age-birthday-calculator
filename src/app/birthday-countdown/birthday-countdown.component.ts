@@ -45,10 +45,6 @@ export class BirthdayCountdownComponent {
     if (isNaN(inputDate.getTime())) {
       return 'Invalid date';
     }
-
-    // if (inputDate.getTime() < currentDate.getTime()) {
-    //   return 'Date of birth cannot be in the future';
-    // }
     
     if (isNaN(this.year) || this.year < 0 || this.year.toString().length !== 4) {
       return 'Invalid year';
