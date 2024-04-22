@@ -26,11 +26,31 @@ export class DateUtilsService {
 
     const ageDate = new Date(ageInMilliseconds);
     const years = Math.abs(ageDate.getUTCFullYear() - 1970);
-    const months = ageDate.getUTCMonth();
-    const days = ageDate.getUTCDate() - 1;
-    const hours = Math.floor((ageInSeconds / 3600) % 24);
-    const minutes = Math.floor((ageInSeconds / 60) % 60);
-    const seconds = Math.floor(ageInSeconds % 60);
+    let months = ageDate.getUTCMonth();
+    let days = ageDate.getUTCDate() - 1;
+    let hours = Math.floor((ageInSeconds / 3600) % 24);
+    let minutes = Math.floor((ageInSeconds / 60) % 60);
+    let seconds = Math.floor(ageInSeconds % 60);
+    if (hours < 0) {
+        hours += 24;
+        days -= 1;
+    }
+
+    if (minutes < 0) {
+        minutes += 60;
+        hours -= 1;
+    }
+
+    if (seconds < 0) {
+        seconds += 60;
+        minutes -= 1;
+    }
+
+    if (days < 0) {
+        const daysInPreviousMonth = new Date(finalDate.getFullYear(), finalDate.getMonth(), 0).getDate();
+        days += daysInPreviousMonth;
+        months -= 1;
+    }
 
     return { years, months, days, hours, minutes, seconds }
   }
